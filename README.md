@@ -35,7 +35,7 @@ quality-exceptions.json  The only place file-level gate exceptions may live.
 | Duplicated code       | 0              | `bun run dup`          |
 | Surviving mutants     | 0              | `bun run mutate`       |
 
-`bun run verify-gates` proves the gates actually reject bad code, by writing deliberately broken files and asserting each gate rejects them for the right reason. A gate that has silently stopped enforcing anything is the failure mode this repo is designed around.
+`bun run verify-gates` proves the gates actually reject bad code. It plants a deliberate violation for each gate, runs the real gate, and asserts it is rejected **and named the expected rule** — an exit code alone would pass if the gate had failed for an unrelated reason. It also asserts the Stryker patch is still applied, since that is the mutation gate’s real failure mode. A gate that has silently stopped enforcing anything is the failure mode this repo is designed around.
 
 ## Design decisions worth knowing
 
