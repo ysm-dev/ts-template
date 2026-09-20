@@ -17,9 +17,13 @@ export default {
   // score collapses and `thresholds.break` fails the build rather than passing vacuously.
 
   // Stryker discovers plugins by globbing `node_modules/@stryker-mutator/*`. Bun's isolated
-  // linker puts the real packages in `node_modules/.bun` and leaves only symlinks behind, so
-  // the glob finds nothing and the runner fails with `Cannot find TestRunner plugin "vitest"`.
-  // Naming the plugin explicitly skips discovery entirely.
+  // linker leaves only symlinks behind, so the glob finds nothing and the runner fails with
+  // `Cannot find TestRunner plugin "vitest"`.
+  //
+  // This must be a **path**, not the package name `@stryker-mutator/vitest-runner`. With
+  // `globalStore = true` the real packages live in ~/.bun/install/cache/links, which is not a
+  // parent of this project, so Stryker cannot resolve the plugin by name from its own location.
+  // The path goes through the project's own symlink, which resolves under either store layout.
   plugins: ["./node_modules/@stryker-mutator/vitest-runner/dist/src/index.js"],
 
   // Points at a file that deliberately does not exist. Stryker's TSConfigPreprocessor rewrites
