@@ -1,0 +1,53 @@
+# ts-template
+
+A TypeScript monorepo template built for agent-generated code: bun, Turborepo, TypeScript 7, and eight quality gates that block CI.
+
+The premise is that when agents write most of the code, review does not scale but gates do.
+
+## Quick start
+
+```sh
+bun install
+bun run ci
+```
+
+## Layout
+
+```
+apps/cli/              Example application. Zero dependencies, no build step.
+packages/duration/     Example library. Demonstrates narrowing `unknown` at a trust boundary.
+scripts/               Repo tooling: exceptions report, gate verification, init.
+quality-exceptions.json  The only place file-level gate exceptions may live.
+```
+
+## The gates
+
+| Gate                  | Threshold      | Command                |
+| --------------------- | -------------- | ---------------------- |
+| Formatting            | clean          | `bun run format:check` |
+| Cyclomatic complexity | < 22           | `bun run lint`         |
+| Cognitive complexity  | < 22           | `bun run lint`         |
+| Lines per file        | < 500          | `bun run lint`         |
+| `any` types           | 0              | `bun run lint`         |
+| Types                 | clean          | `bun run typecheck`    |
+| Coverage              | 100%, per file | `bun run test`         |
+| Dead code             | 0              | `bun run knip`         |
+| Duplicated code       | 0              | `bun run dup`          |
+| Surviving mutants     | 0              | `bun run mutate`       |
+
+`bun run verify-gates` proves the gates actually reject bad code, by writing deliberately broken files and asserting each gate rejects them for the right reason. A gate that has silently stopped enforcing anything is the failure mode this repo is designed around.
+
+## Design decisions worth knowing
+
+- **bun installs and runs scripts; Node runs tests.** Vitest treats bun as a package manager only, and the v8 coverage provider does not work on the bun runtime.
+- **No build step anywhere.** Packages export TypeScript source directly. A compiled package that has not been built makes type-aware lint and knip exit 0 while enforcing nothing — a silent false pass.
+- **Exact version pins, no ranges.** oxfmt is pre-1.0 with no semver protection on formatting output, and `oxlint-tsgolint` is hard-pinned to a TypeScript patch release.
+- **bun's default isolated linker is kept.** It turns an undeclared dependency into an immediate failure instead of a latent bug.
+
+## Starting a project from this template
+
+```sh
+bun run init @your-scope
+```
+
+Rewrites the package scope, updates the README, and removes itself.

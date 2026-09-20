@@ -5,3 +5,4 @@ dist/
 .vitest/
 .stryker-tmp/
 reports/
+.gates-check/
