@@ -20,7 +20,7 @@ export default {
   // linker puts the real packages in `node_modules/.bun` and leaves only symlinks behind, so
   // the glob finds nothing and the runner fails with `Cannot find TestRunner plugin "vitest"`.
   // Naming the plugin explicitly skips discovery entirely.
-  plugins: ["@stryker-mutator/vitest-runner"],
+  plugins: ["./node_modules/@stryker-mutator/vitest-runner/dist/src/index.js"],
 
   // Points at a file that deliberately does not exist. Stryker's TSConfigPreprocessor rewrites
   // relative `extends`/`references` paths so they still resolve from inside the sandbox, and it
