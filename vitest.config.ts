@@ -4,7 +4,6 @@ import exceptions from "./quality-exceptions.json" with { type: "json" };
 export default defineConfig({
   test: {
     projects: ["packages/*", "apps/*"],
-    include: ["src/**/*.test.ts"],
     coverage: {
       provider: "v8",
       include: ["packages/*/src/**/*.ts", "apps/*/src/**/*.ts"],

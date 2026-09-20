@@ -51,3 +51,11 @@ bun run init @your-scope
 ```
 
 Rewrites the package scope, updates the README, and removes itself.
+
+## Known patch
+
+`@stryker-mutator/vitest-runner@10.0.0` is patched via `bun patch` (see `patches/`).
+
+Vitest 5 changed `testNamePattern` to match against a `" > "`-joined test name; the Stryker runner still joins with a single space, so every test nested in a `describe` is skipped and every mutant is reported as survived. Upstream: [stryker-js#6210](https://github.com/stryker-mutator/stryker-js/issues/6210).
+
+The patch is pinned to exactly `10.0.0`. If Renovate bumps the runner, `patchedDependencies` stops matching and bun applies nothing — but it **fails closed**: unpatched, the score collapses to 3.33% and `thresholds.break: 100` reds the build. Remove the patch when the fix ships upstream.
