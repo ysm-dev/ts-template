@@ -8,7 +8,11 @@
 // the model can call on its own while leaving it loadable by explicit ID or
 // slash command. See: https://opencode.ai/v2/docs/skills#frontmatter
 //
-// Safe to re-run (idempotent) after `npx skills update` re-copies files.
+// Refresh mattpocock/skills for OpenCode only (leaves other sources alone):
+//   bunx skills@1.7.0 add mattpocock/skills --agent opencode --skill '*' -y
+// Remove each skill deleted upstream; non-interactive updates leave them behind:
+//   bunx skills@1.7.0 remove <deleted-skill> -y
+// Safe to re-run (idempotent) after refreshing the vendored files.
 //
 // Usage: node scripts/patch-opencode-skill-autoinvoke.mjs [skillsDir]
 
