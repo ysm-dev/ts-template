@@ -14,7 +14,7 @@ bun run ci
 ## Layout
 
 ```
-apps/cli/              Example application. Zero dependencies, no build step.
+packages/cli/          Example application. Zero dependencies, no build step.
 packages/duration/     Example library. Demonstrates narrowing `unknown` at a trust boundary.
 scripts/               Repo tooling: exceptions report, gate verification, init.
 quality-exceptions.json  The only place file-level gate exceptions may live.

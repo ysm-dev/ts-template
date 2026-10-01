@@ -21,7 +21,7 @@
         "vitest": "5.0.2",
       },
     },
-    "apps/cli": {
+    "packages/cli": {
       "name": "@repo/cli",
       "version": "0.0.0",
       "bin": {
@@ -341,7 +341,7 @@
 
     "@oxlint/plugins": ["@oxlint/plugins@1.85.0", "", {}, "sha512-qqHqML3ME3cxGgFvWJG8wwMnJc9ol5SMdtqkq0k8r7l0USmC+HRXYjzDacME4Dqkx4yqrUsBhj0JYvji8fHxJQ=="],
 
-    "@repo/cli": ["@repo/cli@workspace:apps/cli"],
+    "@repo/cli": ["@repo/cli@workspace:packages/cli"],
 
     "@repo/duration": ["@repo/duration@workspace:packages/duration"],
 

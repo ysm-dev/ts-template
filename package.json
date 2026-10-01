@@ -2,7 +2,6 @@
   "name": "ts-template",
   "private": true,
   "workspaces": [
-    "apps/*",
     "packages/*"
   ],
   "type": "module",
