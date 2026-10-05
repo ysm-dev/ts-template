@@ -18,6 +18,7 @@ jobs:
   gates:
     name: Quality gates
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
         with:
@@ -33,3 +34,5 @@ jobs:
       # dependency that fails here.
       - run: bun install --frozen-lockfile
       - run: bun run ci
+      - name: Deliberately exceed the CI duration budget
+        run: sleep 330
