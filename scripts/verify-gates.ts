@@ -1,17 +1,19 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import process from "node:process";
+import { verifyCiDuration } from "./ci-duration.ts";
 
 /**
  * Proves each gate actually rejects the thing it claims to reject.
  *
  * A misconfigured gate does not fail loudly — it exits 0 while enforcing
- * nothing. Every check plants deliberately bad code, runs the real gate, and
+ * nothing. Code checks plant deliberately bad code, run the real gate, and
  * asserts it is rejected *and named the expected rule*: an exit code alone
  * would pass if the gate had failed for an unrelated reason.
  *
- * Planted files are always removed, including on failure.
+ * Planted files are always removed, including on failure. CI duration checks
+ * the workflow configuration; GitHub enforces the actual timeout.
  */
 
 const SCRATCH = ".gates-check";
@@ -162,7 +164,12 @@ const verify = (check: Check): readonly string[] => {
 rmSync(SCRATCH, { recursive: true, force: true });
 mkdirSync(SCRATCH, { recursive: true });
 
-const failures = CHECKS.flatMap(verify);
+const failures = [
+  ...verifyCiDuration(readFileSync(".github/workflows/ci.yml", "utf8")),
+  ...CHECKS.flatMap(verify),
+];
+
+process.stdout.write("  CI duration (workflow configuration)\n");
 
 for (const check of CHECKS) {
   process.stdout.write(`  ${check.gate}\n`);

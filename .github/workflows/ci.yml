@@ -18,6 +18,8 @@ jobs:
   gates:
     name: Quality gates
     runs-on: ubuntu-latest
+    # Keep the full feedback loop cheap enough for people and agents to wait for.
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
         with:

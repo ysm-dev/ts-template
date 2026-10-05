@@ -1,6 +1,6 @@
 # ts-template
 
-A TypeScript monorepo template built for agent-generated code: bun, Turborepo, TypeScript 7, and seven quality gates that block CI.
+A TypeScript monorepo template built for agent-generated code: bun, Turborepo, TypeScript 7, and quality gates that block CI.
 
 The premise is that when agents write most of the code, review does not scale but gates do.
 
@@ -33,12 +33,24 @@ quality-exceptions.json  The only place file-level gate exceptions may live.
 | Coverage              | 100%, per file | `bun run test`         |
 | Dead code             | 0              | `bun run knip`         |
 | Duplicated code       | 0              | `bun run dup`          |
+| CI duration           | ≤ 5 min        | GitHub job timeout     |
 
-`bun run verify-gates` proves the gates actually reject bad code. It plants a deliberate violation for each gate, runs the real gate, and asserts it is rejected **and named the expected rule** — an exit code alone would pass if the gate had failed for an unrelated reason. A gate that has silently stopped enforcing anything is the failure mode this repo is designed around.
+`bun run verify-gates` proves the code gates actually reject bad code. It plants deliberate violations, runs the real gates, and asserts they are rejected **and name the expected rule** — an exit code alone would pass if a gate had failed for an unrelated reason. For CI duration it validates the workflow configuration: every job must have an integer `timeout-minutes` from 1 to 5 and no `needs`. GitHub enforces the timeout. A gate that has silently stopped enforcing anything is the failure mode this repo is designed around.
+
+### CI duration
+
+Every job in the `CI` workflow has a hard five-minute execution budget, including checkout, runtime setup, dependency installation and all gates. Runner queue time is excluded. GitHub stops an over-budget job; the required `Quality gates` check cannot pass, blocking merges. This applies to PR, push and scheduled runs and ships with the template. Local commands, git hooks, and separate deployment or release workflows are outside this budget.
+
+GitHub reports a timed-out job as cancelled with a timeout failure annotation. Cancellation and cleanup can make its recorded duration exceed five minutes; the budget triggers cancellation rather than guaranteeing an instantaneous stop.
+
+CI currently has one job, so this bounds its end-to-end execution. If CI is split, jobs must be independent and each must become a required check in branch protection. Per-job timeouts do not bound total workflow elapsed time when runners start jobs at different times.
+
+There are no warnings, regression comparisons or waivers. Only a human may change the ceiling. When CI times out, make it faster or ask for help; preserve all gates and avoid reruns seeking a lucky pass.
 
 ## Design decisions worth knowing
 
-- **bun installs and runs scripts; Node runs tests.** Vitest treats bun as a package manager only, and the v8 coverage provider does not work on the bun runtime.
+- **Five-minute CI budget.** Agents iterate against CI. When CI is too slow to wait for, people and agents work around it, and the gates stop shaping the code. Five minutes keeps every gate cheap enough to wait for.
+- **bun runs tooling; Node runs package tests.** Vitest treats bun as a package manager only, and the v8 coverage provider does not work on the bun runtime. Workflow-validator tests run with `bun test` to exercise Bun's YAML parser; `verify-gates` includes them.
 - **No build step anywhere.** Packages export TypeScript source directly. A compiled package that has not been built makes type-aware lint and knip exit 0 while enforcing nothing — a silent false pass.
 - **Exact version pins, no ranges.** oxfmt is pre-1.0 with no semver protection on formatting output, and `oxlint-tsgolint` is hard-pinned to a TypeScript patch release.
 - **bun's default isolated linker is kept.** It turns an undeclared dependency into an immediate failure instead of a latent bug.

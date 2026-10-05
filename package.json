@@ -15,11 +15,12 @@
     "knip": "knip && knip --production",
     "dup": "jscpd",
     "exceptions": "bun run scripts/exceptions.ts",
-    "verify-gates": "bun run scripts/verify-gates.ts",
+    "verify-gates": "bun test scripts/ci-duration.test.ts && bun run scripts/verify-gates.ts",
     "prepare": "lefthook install",
     "init": "bun run scripts/init.ts"
   },
   "devDependencies": {
+    "@types/bun": "1.4.2",
     "@types/node": "26.6.3",
     "@vitest/coverage-v8": "5.0.2",
     "jscpd": "5.3.3",

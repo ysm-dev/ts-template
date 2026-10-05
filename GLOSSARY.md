@@ -7,7 +7,7 @@ A TypeScript monorepo template whose purpose is to make agent-generated code saf
 ### Enforcement
 
 **Gate**:
-A single automated check that blocks a merge when it fails. There are seven, listed in `README.md`.
+A single automated check that blocks a merge when it fails. The full list is in `README.md`.
 _Avoid_: rule, check, lint (a lint rule is one implementation of a gate, not a synonym)
 
 **Silent false pass**:
