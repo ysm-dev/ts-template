@@ -34,20 +34,20 @@ Single-context: root `GLOSSARY.md` + `docs/adr/`. See `docs/agents/domain.md`.
 
 ## Quality gates
 
-This repo enforces the gates listed below. They are not advisory. `bun run ci` runs the code gates and validates the CI duration configuration; GitHub enforces the execution timeout.
+This repo enforces the gates listed below. They are not advisory. `bun run ci` runs the code gates with one five-minute execution budget locally and on GitHub, and validates the workflow duration configuration. GitHub additionally times the entire job, including setup and installation.
 
-| Gate                  | Threshold      | Enforced by                 |
-| --------------------- | -------------- | --------------------------- |
-| Formatting            | clean          | `bun run format:check`      |
-| Cyclomatic complexity | < 22           | oxlint `eslint/complexity`  |
-| Cognitive complexity  | < 22           | `oxlint-plugin-complexity`  |
-| Lines per file        | < 500          | oxlint `eslint/max-lines`   |
-| Types                 | clean          | `bun run typecheck`         |
-| Test coverage         | 100%, per file | vitest `thresholds.perFile` |
-| Dead code             | 0              | knip                        |
-| Duplicated code       | 0              | jscpd                       |
-| `any` types           | 0              | oxlint `no-explicit-any`    |
-| CI duration           | ≤ 5 min        | GitHub job timeout          |
+| Gate                  | Threshold      | Enforced by                       |
+| --------------------- | -------------- | --------------------------------- |
+| Formatting            | clean          | `bun run format:check`            |
+| Cyclomatic complexity | < 22           | oxlint `eslint/complexity`        |
+| Cognitive complexity  | < 22           | `oxlint-plugin-complexity`        |
+| Lines per file        | < 500          | oxlint `eslint/max-lines`         |
+| Types                 | clean          | `bun run typecheck`               |
+| Test coverage         | 100%, per file | vitest `thresholds.perFile`       |
+| Dead code             | 0              | knip                              |
+| Duplicated code       | 0              | jscpd                             |
+| `any` types           | 0              | oxlint `no-explicit-any`          |
+| CI duration           | ≤ 5 min        | `bun run ci` + GitHub job timeout |
 
 Every job in `.github/workflows/ci.yml` needs an integer `timeout-minutes` from 1 to 5 and must be independent (no `needs`). The budget includes setup, installation and gates, excluding runner queue time. When splitting CI, make every job a required check in branch protection; per-job timeouts do not bound staggered runner starts. See `README.md` for the CI duration scope and rationale.
 
